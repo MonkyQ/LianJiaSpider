@@ -144,7 +144,7 @@ def xiaoqu_spider(db_xq,url_page=u"http://bj.lianjia.com/xiaoqu/pg1rs%E6%98%8C%E
         req = urllib2.Request(url_page,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=10).read()
         plain_text=unicode(source_code)#,errors='ignore')   
-        soup = BeautifulSoup(plain_text)
+        soup = BeautifulSoup(plain_text, "html.parser")
     except (urllib2.HTTPError, urllib2.URLError), e:
         print e
         exit(-1)
@@ -177,7 +177,7 @@ def do_xiaoqu_spider(db_xq,region=u"昌平"):
         req = urllib2.Request(url,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=5).read()
         plain_text=unicode(source_code)#,errors='ignore')   
-        soup = BeautifulSoup(plain_text)
+        soup = BeautifulSoup(plain_text, "html.parser")
     except (urllib2.HTTPError, urllib2.URLError), e:
         print e
         return
@@ -208,7 +208,7 @@ def chengjiao_spider(db_cj,url_page=u"http://bj.lianjia.com/chengjiao/pg1rs%E5%8
         req = urllib2.Request(url_page,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=10).read()
         plain_text=unicode(source_code)#,errors='ignore')   
-        soup = BeautifulSoup(plain_text)
+        soup = BeautifulSoup(plain_text, "html.parser")
     except (urllib2.HTTPError, urllib2.URLError), e:
         print e
         exception_write('chengjiao_spider',url_page)
@@ -266,7 +266,7 @@ def xiaoqu_chengjiao_spider(db_cj,xq_name=u"冠庭园"):
         req = urllib2.Request(url,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=10).read()
         plain_text=unicode(source_code)#,errors='ignore')   
-        soup = BeautifulSoup(plain_text)
+        soup = BeautifulSoup(plain_text, "html.parser")
     except (urllib2.HTTPError, urllib2.URLError), e:
         print e
         exception_write('xiaoqu_chengjiao_spider',xq_name)
