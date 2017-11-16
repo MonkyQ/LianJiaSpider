@@ -103,6 +103,27 @@ class SQLiteWraper(object):
             pass
         return lists
 
+def get_region_link(city='北京', url_page=u"http://bj.lianjia.com/"):
+    """
+        爬取首页城市信息
+        """
+    global regions
+    try:
+        req = urllib2.Request(url_page, headers=hds[random.randint(0, len(hds) - 1)])
+        source_code = urllib2.urlopen(req, timeout=10).read()
+        plain_text = unicode(source_code)  # ,errors='ignore')
+        soup = BeautifulSoup(plain_text, "html.parser")
+    except (urllib2.HTTPError, urllib2.URLError), e:
+        print e
+        exit(-1)
+    except Exception, e:
+        print e
+    city_list = soup.findAll('div', {'class': 'city-enum fl'})
+    print 'city ', city_list
+    for _city in city_list:
+        print _city.get_text()
+        # todo: 提取对应城市的href
+
 
 def gen_xiaoqu_insert_command(info_dict):
     """
@@ -153,6 +174,7 @@ def xiaoqu_spider(db_xq,url_page=u"http://bj.lianjia.com/xiaoqu/pg1rs%E6%98%8C%E
         exit(-1)
     
     xiaoqu_list=soup.findAll('div',{'class':'info-panel'})
+    print xiaoqu_list
     for xq in xiaoqu_list:
         info_dict={}
         info_dict.update({u'小区名称':xq.find('a').text})
