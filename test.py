@@ -27,4 +27,4 @@ def do_xiaoqu_spider1(region=u"昌平"):
     print u"爬下了 %s 区全部的小区信息" % region
 
 
-get_region_link("合肥")
+get_region_info()

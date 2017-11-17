@@ -37,7 +37,8 @@ hds=[{'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) 
 
 ## 全局变量
 # 区域列表
-regions=[u"东城",u"西城",u"朝阳",u"海淀",u"丰台",u"石景山","通州",u"昌平",u"大兴",u"亦庄开发区",u"顺义",u"房山",u"门头沟",u"平谷",u"怀柔",u"密云",u"延庆",u"燕郊"]
+# regions=[u"东城",u"西城",u"朝阳",u"海淀",u"丰台",u"石景山","通州",u"昌平",u"大兴",u"亦庄开发区",u"顺义",u"房山",u"门头沟",u"平谷",u"怀柔",u"密云",u"延庆",u"燕郊"]
+regions = []
 base_url = 'https://bj.lianjia.com/'
 
 lock = threading.Lock()
@@ -104,11 +105,11 @@ class SQLiteWraper(object):
             pass
         return lists
 
-def get_region_link(city='北京', url_page=u"http://bj.lianjia.com/"):
+def get_city_baselink(city='北京', url_page=u"http://bj.lianjia.com/"):
     """
         爬取首页城市信息
-        """
-    global regions, base_url
+    """
+    global base_url
     try:
         req = urllib2.Request(url_page, headers=hds[random.randint(0, len(hds) - 1)])
         source_code = urllib2.urlopen(req, timeout=10).read()
@@ -129,8 +130,37 @@ def get_region_link(city='北京', url_page=u"http://bj.lianjia.com/"):
             for _c in city_row:
                 if city == _c.get_text():  # 唯一城市
                     base_url = _c['href']
-    print city, base_url
+    # print city, base_url
 
+def get_region_info():
+    """
+        爬取城市行政区信息
+    """
+    # todo: 提取行政区信息
+    global regions, base_url
+    xiaoqu_url = unicode(base_url) + u"xiaoqu/"
+    try:
+        req = urllib2.Request(xiaoqu_url, headers=hds[random.randint(0, len(hds) - 1)])
+        source_code = urllib2.urlopen(req, timeout=10).read()
+        plain_text = unicode(source_code)  # ,errors='ignore')
+        soup = BeautifulSoup(plain_text, "html.parser")
+    except (urllib2.HTTPError, urllib2.URLError), e:
+        print e
+        exit(-1)
+    except Exception, e:
+        print e
+    region_div = soup.findAll('div', {'data-role': 'ershoufang'})
+    print type(region_div)
+    # regiontxt = region_div.find_all('a')
+    # 提取对应城市的href
+    for regtxt in region_div:
+        regs = regtxt.div.find_all('a')
+        for r in regs:
+            # print r['href'], r.string
+            reg_name = r.string
+            if len(reg_name) > 0:
+                regions.append(reg_name)
+        # print reg.a['href'], reg.a.get_text()
 
 def gen_xiaoqu_insert_command(info_dict):
     """
@@ -389,12 +419,17 @@ def exception_spider(db_cj):
 
 
 if __name__=="__main__":
+    # set city
+    city = "广州"
+
     command="create table if not exists xiaoqu (name TEXT primary key UNIQUE, regionb TEXT, regions TEXT, style TEXT, year TEXT)"
     db_xq=SQLiteWraper('lianjia-xq.db',command)
     
     command="create table if not exists chengjiao (href TEXT primary key UNIQUE, name TEXT, style TEXT, area TEXT, orientation TEXT, floor TEXT, year TEXT, sign_time TEXT, unit_price TEXT, total_price TEXT,fangchan_class TEXT, school TEXT, subway TEXT)"
     db_cj=SQLiteWraper('lianjia-cj.db',command)
-    
+
+    get_city_baselink(city)
+    get_region_info()
     #爬下所有的小区信息
     for region in regions:
         do_xiaoqu_spider(db_xq,region)
