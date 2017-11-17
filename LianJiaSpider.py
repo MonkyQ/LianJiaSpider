@@ -35,9 +35,10 @@ hds=[{'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) 
     {'User-Agent':'Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11'}]
     
 
-#北京区域列表
+## 全局变量
+# 区域列表
 regions=[u"东城",u"西城",u"朝阳",u"海淀",u"丰台",u"石景山","通州",u"昌平",u"大兴",u"亦庄开发区",u"顺义",u"房山",u"门头沟",u"平谷",u"怀柔",u"密云",u"延庆",u"燕郊"]
-
+base_url = 'https://bj.lianjia.com/'
 
 lock = threading.Lock()
 
@@ -107,7 +108,7 @@ def get_region_link(city='北京', url_page=u"http://bj.lianjia.com/"):
     """
         爬取首页城市信息
         """
-    global regions
+    global regions, base_url
     try:
         req = urllib2.Request(url_page, headers=hds[random.randint(0, len(hds) - 1)])
         source_code = urllib2.urlopen(req, timeout=10).read()
@@ -119,10 +120,16 @@ def get_region_link(city='北京', url_page=u"http://bj.lianjia.com/"):
     except Exception, e:
         print e
     city_list = soup.findAll('div', {'class': 'city-enum fl'})
-    print 'city ', city_list
+    # 提取对应城市的href
     for _city in city_list:
-        print _city.get_text()
-        # todo: 提取对应城市的href
+        if city == _city.get_text():  # 唯一城市
+            base_url = _city.a['href']
+        elif city in _city.get_text(): # 一串城市
+            city_row = _city.find_all('a')
+            for _c in city_row:
+                if city == _c.get_text():  # 唯一城市
+                    base_url = _c['href']
+    print city, base_url
 
 
 def gen_xiaoqu_insert_command(info_dict):
