@@ -150,7 +150,6 @@ def get_region_info():
     except Exception, e:
         print e
     region_div = soup.findAll('div', {'data-role': 'ershoufang'})
-    print type(region_div)
     # regiontxt = region_div.find_all('a')
     # 提取对应城市的href
     for regtxt in region_div:
@@ -231,7 +230,7 @@ def do_xiaoqu_spider(db_xq,region=u"昌平"):
     """
     爬取大区域中的所有小区信息
     """
-    url=u"http://bj.lianjia.com/xiaoqu/rs"+region+"/"
+    url = unicode(base_url) + u"xiaoqu/rs" + region + u"/"
     try:
         req = urllib2.Request(url,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=5).read()
@@ -249,7 +248,7 @@ def do_xiaoqu_spider(db_xq,region=u"昌平"):
     
     threads=[]
     for i in range(total_pages):
-        url_page=u"http://bj.lianjia.com/xiaoqu/pg%drs%s/" % (i+1,region)
+        url_page = unicode(base_url) + u"xiaoqu/pg%drs%s/" % (i + 1, region)
         t=threading.Thread(target=xiaoqu_spider,args=(db_xq,url_page))
         threads.append(t)
     for t in threads:
@@ -320,7 +319,7 @@ def xiaoqu_chengjiao_spider(db_cj,xq_name=u"冠庭园"):
     """
     爬取小区成交记录
     """
-    url=u"http://bj.lianjia.com/chengjiao/rs"+urllib2.quote(xq_name)+"/"
+    url = unicode(base_url) + u"chengjiao/rs" + urllib2.quote(xq_name) + u"/"
     try:
         req = urllib2.Request(url,headers=hds[random.randint(0,len(hds)-1)])
         source_code = urllib2.urlopen(req,timeout=10).read()
@@ -343,7 +342,7 @@ def xiaoqu_chengjiao_spider(db_cj,xq_name=u"冠庭园"):
     
     threads=[]
     for i in range(total_pages):
-        url_page=u"http://bj.lianjia.com/chengjiao/pg%drs%s/" % (i+1,urllib2.quote(xq_name))
+        url_page = unicode(base_url) + u"chengjiao/pg%drs%s/" % (i + 1, urllib2.quote(xq_name))
         t=threading.Thread(target=chengjiao_spider,args=(db_cj,url_page))
         threads.append(t)
     for t in threads:
