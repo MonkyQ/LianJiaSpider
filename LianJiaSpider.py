@@ -215,7 +215,7 @@ def xiaoqu_spider(db_xq,url_page=u"http://bj.lianjia.com/xiaoqu/pg1rs%E6%98%8C%E
         info_dict.update({u'小区名称':xq.div.a.string})
         content=unicode(xq.find('div',{'class':'positionInfo'}).renderContents().strip())
         info=re.match(r".+>(.+)</a>.+>(.+)</a>.+</span>(.+)<span>.+</span>(.+)",content)
-        print content
+        # print content
         if info:
             info=info.groups()
             info_dict.update({u'大区域':info[0]})
