@@ -2,7 +2,9 @@
 
 fork from [北京链家爬虫](https://github.com/lanbing510/LianJiaSpider)
 
-## TODO
-爬取指定(广州)地区链家历年二手房成交记录。
+## 完成
+爬取任意城市的链家信息
+
+## todo: db to excel
 
 

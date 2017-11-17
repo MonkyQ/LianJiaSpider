@@ -209,20 +209,20 @@ def xiaoqu_spider(db_xq,url_page=u"http://bj.lianjia.com/xiaoqu/pg1rs%E6%98%8C%E
         print e
         exit(-1)
     
-    xiaoqu_list=soup.findAll('div',{'class':'info-panel'})
-    print xiaoqu_list
+    xiaoqu_list=soup.findAll('div',{'class':'info'})
     for xq in xiaoqu_list:
         info_dict={}
-        info_dict.update({u'小区名称':xq.find('a').text})
-        content=unicode(xq.find('div',{'class':'con'}).renderContents().strip())
+        info_dict.update({u'小区名称':xq.div.a.string})
+        content=unicode(xq.find('div',{'class':'positionInfo'}).renderContents().strip())
         info=re.match(r".+>(.+)</a>.+>(.+)</a>.+</span>(.+)<span>.+</span>(.+)",content)
+        print content
         if info:
             info=info.groups()
             info_dict.update({u'大区域':info[0]})
             info_dict.update({u'小区域':info[1]})
             info_dict.update({u'小区户型':info[2]})
             info_dict.update({u'建造时间':info[3][:4]})
-        command=gen_xiaoqu_insert_command(info_dict)
+        command = gen_xiaoqu_insert_command(info_dict)
         db_xq.execute(command,1)
 
     
